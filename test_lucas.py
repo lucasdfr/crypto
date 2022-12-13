@@ -1,6 +1,7 @@
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
+from cache.utils import get_block
 from config import Web3Config
 from models.pancakeswap import PancakeSwapRouter, PancakeSwapFactory
 from models.token import Token
@@ -20,13 +21,11 @@ psf = PancakeSwapFactory(psr)
 nexus_bnb_pool = psf.get_pool(nexus, psr.wbnb())
 primal_busd = psf.get_pool(nexus, psr.wbnb())
 
-print(w3.eth.getBlock(2, True))
-exit(0)
 
 end = w3.eth.blockNumber
 # start = end - (10**3)
-# start = 22565864 #NEXUS
-start = 149268  # WBNB
+start = 22565864 #NEXUS
+# start = 149268  # WBNB
 # start = 23199393
 
 tx_dictionary = {}
@@ -50,9 +49,10 @@ for x in range(start, end):
     if p > old_x:
         print(f"{p}%")
         old_x = p
-    block = w3.eth.getBlock(x, True)
-    for transaction_d in block.transactions:
-        t = Transaction(transaction_d)
-        if t.contains_address(address):
-            print(t.hash)
-            result.append(t.hash)
+    # block = w3.eth.getBlock(x, True)
+    block = get_block(x)
+    # for transaction_d in block.transactions:
+    #     t = Transaction(transaction_d)
+    #     if t.contains_address(address):
+    #         print(t.hash)
+    #         result.append(t.hash)
