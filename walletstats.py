@@ -5,16 +5,17 @@ import json, os
 import numpy as np
 
 from api import get_account_transactions, get_abi
+from models.config import Web3Config
+from models.transaction import Transaction
 
 bsc = "https://bsc-dataseed.binance.org/"
-web3 = Web3(Web3.HTTPProvider(bsc))
+w3 = Web3(Web3.HTTPProvider(bsc))
+Web3Config.init(w3)
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
 WALLET_ADDRESS = "0x1884856e3dfe96b143f0ba25bec9f8f1e5feb211"
 COURS_BNB = 290
-
-PANCAKE_SWAP_ROUTER = "0x10ed43c718714eb63d5aa57b78b54704e256024e"
 
 
 def get_transactions_json(address, internal=False):
@@ -94,36 +95,34 @@ def plot_wallet(address, df, df_internal):
 
 
 def get_transactions_detail(transaction_hash):
-    receipt = web3.eth.get_transaction_receipt(transaction_hash)
-    if len(receipt['logs'])>0:
-        for i in range(0, 100):
-            log = receipt['logs'][i]
-            smart_contract = log["address"]
-            abi = get_abi(log["address"])
-            if abi is not None:
-                contract = web3.eth.contract(smart_contract, abi=abi)
-                transfers = []
-                decoded_logs = list(contract.events.Transfer().processReceipt(receipt))
-                for decoded_log in decoded_logs:
-                    if 'from' in decoded_logs[0]['args']:
-                        transfer = {}
-                        transfer['from'] = decoded_log['args']['from']
-                        transfer['to'] = decoded_log['args']['to']
-                        transfer['value'] = float(decoded_log['args']['value'])
-                        transfers += [transfer]
-                return pd.DataFrame(transfers)
+    receipt = w3.eth.get_transaction_receipt(transaction_hash)
+    log = receipt['logs'][0]
+    smart_contract = log["address"]
+    abi = get_abi(log["address"])
+    if abi is not None:
+        contract = w3.eth.contract(smart_contract, abi=abi)
+        transfers = []
+        decoded_logs = list(contract.events.Transfer().processReceipt(receipt))
+        for decoded_log in decoded_logs:
+            if 'from' in decoded_logs[0]['args']:
+                transfer = {}
+                transfer['from'] = decoded_log['args']['from']
+                transfer['to'] = decoded_log['args']['to']
+                transfer['value'] = float(decoded_log['args']['value'])
+                transfers += [transfer]
+        return pd.DataFrame(transfers)
 
 
 def get_holders(df, address):
     abi = get_abi(address)
-    contract = web3.eth.contract(address=web3.toChecksumAddress(address), abi=abi)
+    contract = w3.eth.contract(address=w3.toChecksumAddress(address), abi=abi)
     df_holders = pd.DataFrame(columns=['HOLDER_HASH', 'WALLET', 'UNIT', 'MONEY_IN', 'TIME_IN', 'MONEY_OUT', 'TIME_OUT'])
     for index, tx in df.iterrows():
         if tx['from'] is not None:
-            wallet_balance = web3.eth.getBalance(web3.toChecksumAddress(tx['from']))
+            wallet_balance = w3.eth.getBalance(w3.toChecksumAddress(tx['from']))
             token_balance = contract.functions.balanceOf(tx['from']).call()
-            print(web3.fromWei(wallet_balance, "ether"))
-            print(web3.fromWei(token_balance, "ether"))
+            print(w3.fromWei(wallet_balance, "ether"))
+            print(w3.fromWei(token_balance, "ether"))
 
 
 def get_tokens_analytics(df):
@@ -134,5 +133,6 @@ def get_tokens_analytics(df):
 df = get_transactions_df(WALLET_ADDRESS)
 df_internal = get_transactions_df(WALLET_ADDRESS, internal=True)
 
-get_tokens_analytics(df_internal)
-# print(get_transactions_detail("0x6882f2eb5127b92f987879069fce109d9ae709f5111e7d9713126fef55c48df0"))
+# get_tokens_analytics(df_internal)
+transaction = Transaction("0x6882f2eb5127b92f987879069fce109d9ae709f5111e7d9713126fef55c48df0").get_receipt()
+print(transaction)

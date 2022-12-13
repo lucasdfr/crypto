@@ -6,7 +6,11 @@ from models.contract import Contract
 
 
 class Transaction:
-    def __init__(self, transaction_dict):
+    def __init__(self, address):
+        self.w3 = Web3Config.get_web3()
+        self.cache = {}
+
+        transaction_dict = self.get_transaction(address)
         self.nonce = transaction_dict["nonce"]
         self.sender = to_checksum_address(transaction_dict["from"])
         to_addr = transaction_dict["to"]
@@ -18,7 +22,9 @@ class Transaction:
         self.index = transaction_dict["transactionIndex"]
         self.receipt = None
         self.logs = None
-        self.w3 = Web3Config.get_web3()
+
+    def get_transaction(self, address):
+        return self.w3.eth.get_transaction(address)
 
     def get_receipt(self):
         if self.receipt is not None:
