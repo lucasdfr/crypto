@@ -7,6 +7,10 @@ from models.contract import Contract
 
 class Transaction:
     def __init__(self, address):
+        """
+        :param address: adresse de la transaction
+        :type address: str
+        """
         self.w3 = Web3Config.get_web3()
         self.cache = {}
 
@@ -22,6 +26,8 @@ class Transaction:
         self.index = transaction_dict["transactionIndex"]
         self.receipt = None
         self.logs = None
+        self.is_internal = False
+        self.timestamp = None
 
     def get_transaction(self, address):
         return self.w3.eth.get_transaction(address)
@@ -37,8 +43,16 @@ class Transaction:
         self.logs = contract.contract.events.Transfer().processReceipt(r)
         return self.logs
 
+    def get_timestamp(self):
+        self.timestamp = self.w3.get_block(self.block_number)['timestamp']
+        return self.timestamp
+
     def is_contract_creation(self) -> bool:
         return self.receiver is None
+
+    def is_internal(self) -> bool:
+        self.is_internal = self.w3.eth.get_code(self.receiver).hex() != '0x'
+        return self.is_internal
 
     def created_contract_address(self) -> str:
         if not self.is_contract_creation():

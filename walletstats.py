@@ -5,7 +5,7 @@ import json, os
 import numpy as np
 
 from api import get_account_transactions, get_abi
-from models.config import Web3Config
+from config import Web3Config
 from models.transaction import Transaction
 
 bsc = "https://bsc-dataseed.binance.org/"
@@ -134,5 +134,7 @@ df = get_transactions_df(WALLET_ADDRESS)
 df_internal = get_transactions_df(WALLET_ADDRESS, internal=True)
 
 # get_tokens_analytics(df_internal)
-transaction = Transaction("0x6882f2eb5127b92f987879069fce109d9ae709f5111e7d9713126fef55c48df0").get_receipt()
-print(transaction)
+transaction = Transaction("0x6882f2eb5127b92f987879069fce109d9ae709f5111e7d9713126fef55c48df0")
+# test=transaction.is_internal()
+print(w3.eth.get_code(w3.toChecksumAddress('0xCac0F1A06D3f02397Cfb6D7077321d73b504916e')).hex())
+print(w3.eth.get_code(w3.toChecksumAddress('0x10ED43C718714eb63d5aA57B78B54704E256024E')).hex())
