@@ -1,7 +1,7 @@
 import rlp
 from eth_utils import keccak, to_checksum_address, to_bytes, is_checksum_address
 
-from models.config import Web3Config
+from config import Web3Config
 from models.contract import Contract
 
 

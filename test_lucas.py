@@ -1,7 +1,7 @@
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
-from models.config import Web3Config
+from config import Web3Config
 from models.pancakeswap import PancakeSwapRouter, PancakeSwapFactory
 from models.token import Token
 from models.transaction import Transaction
@@ -19,7 +19,8 @@ psr = PancakeSwapRouter()
 psf = PancakeSwapFactory(psr)
 nexus_bnb_pool = psf.get_pool(nexus, psr.wbnb())
 primal_busd = psf.get_pool(nexus, psr.wbnb())
-print(nexus_bnb_pool)
+
+print(w3.eth.getBlock(2, True))
 exit(0)
 
 end = w3.eth.blockNumber
