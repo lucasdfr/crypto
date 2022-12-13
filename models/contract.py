@@ -1,18 +1,19 @@
+from models.config import Web3Config
+
+
 class Contract:
-    def __init__(self, w3, address, abi):
+    def __init__(self, address, abi):
         """
-        :param w3: connection Web3
-        :type w3: web3.Web3
         :param address: adresse du contrat
         :type address: str
         :param abi: ABI du contrat
         :type abi: str
         """
-        self.w3 = w3
-        self.address = w3.toChecksumAddress(address)
+        self.w3 = Web3Config.get_web3()
+        self.address = self.w3.toChecksumAddress(address)
         self.cache = {}
         self.abi = abi
-        self.contract = w3.eth.contract(address=self.address, abi=self.abi)
+        self.contract = self.w3.eth.contract(address=self.address, abi=self.abi)
 
     def call_cache(self, name, function):
         if name in self.cache:
