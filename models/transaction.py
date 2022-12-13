@@ -1,6 +1,7 @@
 import rlp
 from eth_utils import keccak, to_checksum_address, to_bytes, is_checksum_address
 
+from models.config import Web3Config
 from models.contract import Contract
 
 
@@ -17,15 +18,16 @@ class Transaction:
         self.index = transaction_dict["transactionIndex"]
         self.receipt = None
         self.logs = None
+        self.w3 = Web3Config.get_web3()
 
-    def get_receipt(self, w3):
+    def get_receipt(self):
         if self.receipt is not None:
             return self.receipt
-        self.receipt = w3.eth.get_transaction_receipt(self.hash)
+        self.receipt = self.w3.eth.get_transaction_receipt(self.hash)
         return self.receipt
 
-    def get_logs(self, contract : Contract):
-        r = self.get_receipt(contract.w3)
+    def get_logs(self, contract: Contract):
+        r = self.get_receipt()
         self.logs = contract.contract.events.Transfer().processReceipt(r)
         return self.logs
 

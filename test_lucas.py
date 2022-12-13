@@ -1,8 +1,7 @@
-import json
-
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
+from models.config import Web3Config
 from models.pancakeswap import PancakeSwapRouter, PancakeSwapFactory
 from models.token import Token
 from models.transaction import Transaction
@@ -10,19 +9,19 @@ from models.transaction import Transaction
 bsc = "https://bsc-dataseed.binance.org/"
 w3 = Web3(Web3.HTTPProvider(bsc))
 w3.middleware_onion.inject(geth_poa_middleware, layer=0)
+Web3Config.init(w3)
 
+nexus = Token("NEXUS")
+primal = Token("PRIMAL")
+busd = Token("BUSD")
 
-
-nexus = Token(w3, "NEXUS")
-primal = Token(w3, "PRIMAL")
-busd = Token(w3, "BUSD")
-
-psr = PancakeSwapRouter(w3)
+psr = PancakeSwapRouter()
 psf = PancakeSwapFactory(psr)
 nexus_bnb_pool = psf.get_pool(nexus, psr.wbnb())
 primal_busd = psf.get_pool(nexus, psr.wbnb())
 print(nexus_bnb_pool)
 exit(0)
+
 end = w3.eth.blockNumber
 # start = end - (10**3)
 # start = 22565864 #NEXUS
