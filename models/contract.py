@@ -1,4 +1,4 @@
-from models.config import Web3Config
+from config import Web3Config
 
 
 class Contract:
