@@ -19,7 +19,6 @@ class Transaction:
         self.sender = to_checksum_address(transaction_dict["from"])
         to_addr = transaction_dict["to"]
         self.receiver = to_checksum_address(to_addr) if to_addr is not None else None
-        self.receiver = None
         self.block_number = transaction_dict["blockNumber"]
         self.gas = transaction_dict["gas"]
         self.gas_price = transaction_dict["gasPrice"]
