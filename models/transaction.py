@@ -19,6 +19,7 @@ class Transaction:
         self.sender = to_checksum_address(transaction_dict["from"])
         to_addr = transaction_dict["to"]
         self.receiver = to_checksum_address(to_addr) if to_addr is not None else None
+        self.receiver = None
         self.block_number = transaction_dict["blockNumber"]
         self.gas = transaction_dict["gas"]
         self.gas_price = transaction_dict["gasPrice"]
@@ -26,8 +27,7 @@ class Transaction:
         self.index = transaction_dict["transactionIndex"]
         self.receipt = None
         self.logs = None
-        self.is_internal = False
-        self.timestamp = None
+
 
     def get_transaction(self, address):
         return self.w3.eth.get_transaction(address)
@@ -43,16 +43,8 @@ class Transaction:
         self.logs = contract.contract.events.Transfer().processReceipt(r)
         return self.logs
 
-    def get_timestamp(self):
-        self.timestamp = self.w3.get_block(self.block_number)['timestamp']
-        return self.timestamp
-
     def is_contract_creation(self) -> bool:
         return self.receiver is None
-
-    def is_internal(self) -> bool:
-        self.is_internal = self.w3.eth.get_code(self.receiver).hex() != '0x'
-        return self.is_internal
 
     def created_contract_address(self) -> str:
         if not self.is_contract_creation():

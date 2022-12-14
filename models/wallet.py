@@ -9,7 +9,6 @@ class Wallet:
 
         self.address = self.w3.toChecksumAddress(address)
         self.transactions = pd.DataFrame([])
-        self.holders = []
         self.money_received = 0
         self.money_put = 0
 
