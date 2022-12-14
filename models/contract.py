@@ -1,7 +1,7 @@
-from config import Web3Config
+from models.w3 import W3
 
 
-class Contract:
+class Contract(W3):
     def __init__(self, address, abi):
         """
         :param address: adresse du contrat
@@ -9,7 +9,8 @@ class Contract:
         :param abi: ABI du contrat
         :type abi: str
         """
-        self.w3 = Web3Config.get_web3()
+        super().__init__()
+        # self.w3 = Web3Config.get_web3()
         self.address = self.w3.toChecksumAddress(address)
         self.cache = {}
         self.abi = abi
