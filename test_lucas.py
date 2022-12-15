@@ -2,7 +2,7 @@ from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
 from cache.utils import get_block
-from config import Web3Config
+from config import Config
 from models.pancakeswap import PancakeSwapRouter, PancakeSwapFactory
 from models.token import Token
 from models.transaction import Transaction
@@ -10,7 +10,7 @@ from models.transaction import Transaction
 bsc = "https://bsc-dataseed.binance.org/"
 w3 = Web3(Web3.HTTPProvider(bsc))
 w3.middleware_onion.inject(geth_poa_middleware, layer=0)
-Web3Config.init(w3)
+Config.init(w3)
 
 nexus = Token("NEXUS")
 primal = Token("PRIMAL")

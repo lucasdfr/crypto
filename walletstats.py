@@ -5,7 +5,7 @@ import json, os
 import numpy as np
 
 from api import get_account_transactions, get_abi
-from config import Web3Config
+from config import Config
 from models.financialtransaction import FinancialTransaction
 from models.contract import Contract
 from models.pool import Pool
@@ -16,7 +16,7 @@ from utils import is_token, is_pool
 
 bsc = "https://bsc-dataseed.binance.org/"
 w3 = Web3(Web3.HTTPProvider(bsc))
-Web3Config.init(w3)
+Config.init(w3)
 w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
 pd.options.mode.chained_assignment = None  # default='warn'
