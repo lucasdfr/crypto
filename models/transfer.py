@@ -1,4 +1,4 @@
-from config import Web3Config
+from config import Config
 from models.w3 import W3
 
 from utils import get_type_by_address
