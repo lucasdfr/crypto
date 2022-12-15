@@ -37,7 +37,7 @@ class Transfer(W3):
             self.value = args['value']
 
     def __repr__(self):
-        return f"""Transfer 
+        return f"""Transfer of value {self.value}
         \tFrom : {self.sender}
         \tTo : {self.receiver}
         """

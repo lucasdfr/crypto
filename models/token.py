@@ -14,6 +14,21 @@ class Token(Contract):
             super().__init__(TOKENS[address_or_name], abi)
         else:
             super().__init__(address_or_name, abi)
+        self.name = self.get_name()
+        self.symbol = self.get_symbol()
 
     def __eq__(self, other):
         return self.address == other.address
+
+    def get_name(self) -> str:
+        self.name = self.contract.functions.name().call()
+        return self.name
+
+    def get_symbol(self) -> str:
+        self.symbol = self.contract.functions.symbol().call()
+        return self.symbol
+
+    def __repr__(self):
+        return f"""Token {self.name}
+        \tSymbol : {self.symbol}
+        """

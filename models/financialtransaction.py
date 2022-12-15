@@ -1,6 +1,7 @@
 from api import get_abi
 from models.contract import Contract
 from models.transaction import Transaction
+from models.transfer import Transfer
 from utils import get_type_by_address
 
 
@@ -10,7 +11,7 @@ class FinancialTransaction(Transaction):
         super().__init__(address)
         self.timestamp = self.get_timestamp()
         self.is_internal = self.is_internal()
-        self.decoded_logs = None
+        self.decoded_logs = []
         self.status = 0
         self.value = 0
         self.fees = 0
@@ -31,9 +32,16 @@ class FinancialTransaction(Transaction):
         self.sender = get_type_by_address(self.sender, self.w3)
         return self.sender
 
-    def decoded_logs(self):
+    def get_decoded_logs(self):
         if self.is_internal and self.receipt is None:
             self.receipt = self.get_receipt()
             log = self.receipt['logs'][0]
-            contract = Contract(self.w3.toChecksumAddress(self.receipt["address"]), get_abi(log["address"]))
+            contract = Contract(self.w3.toChecksumAddress(log["address"]), get_abi(log["address"]))
             decoded_logs = list(contract.contract.events.Transfer().processReceipt(self.receipt))
+            for decoded_log in decoded_logs:
+                transfer = Transfer(decoded_log['args'])
+                transfer.get_sender()
+                transfer.get_receiver()
+                self.decoded_logs += [transfer]
+            return self.decoded_logs
+        return []

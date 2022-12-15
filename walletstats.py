@@ -7,9 +7,12 @@ import numpy as np
 from api import get_account_transactions, get_abi
 from config import Web3Config
 from models.financialtransaction import FinancialTransaction
+from models.contract import Contract
+from models.pool import Pool
 from web3.middleware import geth_poa_middleware
 
 from models.transfer import Transfer
+from utils import is_token, is_pool
 
 bsc = "https://bsc-dataseed.binance.org/"
 w3 = Web3(Web3.HTTPProvider(bsc))
@@ -144,6 +147,10 @@ def get_tokens_analytics(df):
 df = get_transactions_df(WALLET_ADDRESS)
 df_internal = get_transactions_df(WALLET_ADDRESS, internal=True)
 
-transaction = FinancialTransaction("0x3c6123c33d0f400b4c0248e290274d1ebdac25a2f4ab378bb972678680f3738c")
-print(transaction.is_internal)
-# print(get_transactions_detail("0x91c04789dfe3f138f4aaac7b7de3fb67f96fcb71b957161c32868cbcc27e6ed4"))
+financial=FinancialTransaction('0x4c5727ac8c204fb1fdbc5a19a8f9cc4e9fd5e9f48b852cf5fcb13db4822d9b84')
+print(financial.is_internal)
+print(financial.get_decoded_logs())
+# print(decoded_logs)
+# financial_transaction.get_receiver()
+# financial_transaction.get_sender()
+# print(financial_transaction)
