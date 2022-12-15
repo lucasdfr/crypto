@@ -1,13 +1,17 @@
 import rlp
 from eth_utils import keccak, to_checksum_address, to_bytes, is_checksum_address
 
-from config import Web3Config
 from models.contract import Contract
+from models.w3 import W3
 
 
-class Transaction:
+class Transaction(W3):
     def __init__(self, address):
-        self.w3 = Web3Config.get_web3()
+        """
+        :param address: adresse de la transaction
+        :type address: str
+        """
+        super().__init__()
         self.cache = {}
 
         transaction_dict = self.get_transaction(address)
@@ -22,6 +26,7 @@ class Transaction:
         self.index = transaction_dict["transactionIndex"]
         self.receipt = None
         self.logs = None
+
 
     def get_transaction(self, address):
         return self.w3.eth.get_transaction(address)

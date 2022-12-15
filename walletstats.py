@@ -5,12 +5,16 @@ import json, os
 import numpy as np
 
 from api import get_account_transactions, get_abi
-from models.config import Web3Config
-from models.transaction import Transaction
+from config import Web3Config
+from models.financialtransaction import FinancialTransaction
+from web3.middleware import geth_poa_middleware
+
+from models.transfer import Transfer
 
 bsc = "https://bsc-dataseed.binance.org/"
 w3 = Web3(Web3.HTTPProvider(bsc))
 Web3Config.init(w3)
+w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -96,21 +100,28 @@ def plot_wallet(address, df, df_internal):
 
 def get_transactions_detail(transaction_hash):
     receipt = w3.eth.get_transaction_receipt(transaction_hash)
-    log = receipt['logs'][0]
-    smart_contract = log["address"]
-    abi = get_abi(log["address"])
-    if abi is not None:
-        contract = w3.eth.contract(smart_contract, abi=abi)
-        transfers = []
-        decoded_logs = list(contract.events.Transfer().processReceipt(receipt))
-        for decoded_log in decoded_logs:
-            if 'from' in decoded_logs[0]['args']:
-                transfer = {}
-                transfer['from'] = decoded_log['args']['from']
-                transfer['to'] = decoded_log['args']['to']
-                transfer['value'] = float(decoded_log['args']['value'])
-                transfers += [transfer]
-        return pd.DataFrame(transfers)
+    for log in receipt['logs']:
+        print(log['address'])
+    for log in receipt['logs']:
+        # log = receipt['logs'][0]
+        smart_contract = log["address"]
+        # print(smart_contract)
+        abi = get_abi(log["address"])
+        if abi is not None:
+            contract = w3.eth.contract(smart_contract, abi=abi)
+            transfers = []
+            decoded_logs = list(contract.events.Transfer().processReceipt(receipt))
+            for decoded_log in decoded_logs:
+                print(Transfer(decoded_log['args']))
+            # print(contract.events.Transfer().processReceipt(receipt))
+            # for decoded_log in decoded_logs:
+            #     if 'from' in decoded_logs[0]['args']:
+            #         transfer = {}
+            #         transfer['from'] = decoded_log['args']['from']
+            #         transfer['to'] = decoded_log['args']['to']
+            #         transfer['value'] = float(decoded_log['args']['value'])
+            #         transfers += [transfer]
+            # return pd.DataFrame(transfers)
 
 
 def get_holders(df, address):
@@ -133,6 +144,6 @@ def get_tokens_analytics(df):
 df = get_transactions_df(WALLET_ADDRESS)
 df_internal = get_transactions_df(WALLET_ADDRESS, internal=True)
 
-# get_tokens_analytics(df_internal)
-transaction = Transaction("0x6882f2eb5127b92f987879069fce109d9ae709f5111e7d9713126fef55c48df0").get_receipt()
-print(transaction)
+transaction = FinancialTransaction("0x3c6123c33d0f400b4c0248e290274d1ebdac25a2f4ab378bb972678680f3738c")
+print(transaction.is_internal)
+# print(get_transactions_detail("0x91c04789dfe3f138f4aaac7b7de3fb67f96fcb71b957161c32868cbcc27e6ed4"))
