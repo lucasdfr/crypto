@@ -7,10 +7,10 @@ class Config(object):
     models = []
 
     @staticmethod
-    def init(w3, models=[]):
+    def init(w3):
         Config.w3 = w3
         Config.database.connect()
-        Config.database.create_tables(models)
+        Config.database.create_tables(Config.models)
 
     @staticmethod
     def get_web3():
@@ -21,3 +21,7 @@ class Config(object):
     @staticmethod
     def get_database():
         return Config.database
+
+    @staticmethod
+    def register_model(model):
+        Config.models.append(model)

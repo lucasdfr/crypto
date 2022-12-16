@@ -92,3 +92,6 @@ class Transaction(W3):
         \tFrom : {self.sender}
         \tTo : {self.receiver}
         """
+
+
+Config.register_model(Transaction)
