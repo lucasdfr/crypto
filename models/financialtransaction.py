@@ -8,7 +8,7 @@ from utils import get_type_by_address
 class FinancialTransaction:
 
     def __init__(self, address: str):
-        self.transaction = Transaction.get_by_address(address)
+        self.transaction = Transaction(address)
         self.timestamp = self.get_timestamp()
         self.is_internal = self.is_internal()
         self.decoded_logs = []

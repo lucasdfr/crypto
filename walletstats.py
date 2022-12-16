@@ -18,7 +18,7 @@ from utils import is_token, is_pool, get_value_of_token
 
 bsc = "https://bsc-dataseed.binance.org/"
 w3 = Web3(Web3.HTTPProvider(bsc))
-Config.init(w3, models=[Transaction])
+Config.init(w3)
 w3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -111,6 +111,6 @@ def plot_wallet(address, df, df_internal):
 
 financial = FinancialTransaction('0x4c5727ac8c204fb1fdbc5a19a8f9cc4e9fd5e9f48b852cf5fcb13db4822d9b84')
 print(financial.get_status())
-print(financial.get_decoded_logs())
+# print(financial.get_decoded_logs())
 argentina = Token('0x715a26bf4c61304104e29bb50862bcdef24eab36')
 print(get_value_of_token(argentina))
