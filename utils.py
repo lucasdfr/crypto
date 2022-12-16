@@ -1,4 +1,5 @@
-from models.pancakeswap import PancakeSwapRouter
+from models.busd import BUSD
+from models.pancakeswap import PancakeSwapRouter, PancakeSwapFactory
 from models.pool import Pool
 from models.wallet import Wallet
 from models.token import Token
@@ -43,3 +44,8 @@ def get_type_by_address(address: str, w3):
         return PancakeSwapRouter()
     if is_pool(address):
         return Pool(address)
+
+
+def get_value_of_token(token:Token, unit='BUSD'):
+    pool = PancakeSwapFactory(PancakeSwapRouter()).get_pool(token, BUSD())
+    print(pool)

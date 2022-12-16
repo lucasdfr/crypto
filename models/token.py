@@ -1,4 +1,5 @@
 import json
+
 from models.contract import Contract
 from models.wallet import Wallet
 
@@ -32,6 +33,7 @@ class Token(Contract):
 
     def get_balance_of(self, wallet_address: str) -> float:
         return self.contract.functions.balanceOf(self.w3.toChecksumAddress(wallet_address)).call()
+
 
     def get_holders(self):
         # todo un fois qu'on aura indexé les transactions
