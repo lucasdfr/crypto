@@ -1,3 +1,6 @@
 .idea
 cache/_blocks
 cache/block_index
+*.db
+*.json
+*.sqlite
