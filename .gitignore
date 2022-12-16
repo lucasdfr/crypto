@@ -1,6 +1,5 @@
 .idea
-cache/_blocks
-cache/block_index
+data/_blocks
 *.db
 *.json
 *.sqlite

@@ -1,8 +1,7 @@
 from config import Config
-from models import BaseModel
 
 
-class W3(BaseModel):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class W3:
+    def __init__(self):
+        super().__init__()
         self.w3 = Config.get_web3()
