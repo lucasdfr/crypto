@@ -4,3 +4,4 @@ rlp~=2.0.1
 matplotlib~=3.6.2
 pandas~=1.5.2
 numpy~=1.23.5
+peewee~=3.15.4

@@ -1,35 +1,61 @@
 import rlp
 from eth_utils import keccak, to_checksum_address, to_bytes, is_checksum_address
+from peewee import IntegerField, TextField, DoesNotExist
 
+from config import Config
 from models.contract import Contract
 from models.w3 import W3
 
 
 class Transaction(W3):
-    def __init__(self, address):
-        """
-        :param address: adresse de la transaction
-        :type address: str
-        """
-        super().__init__()
-        self.cache = {}
+    nonce = IntegerField()
+    sender = TextField()
+    receiver = TextField()
+    block_number = IntegerField()
+    gas = IntegerField()
+    gas_price = IntegerField()
+    hash = TextField(unique=True)
 
-        transaction_dict = self.get_transaction(address)
-        self.nonce = transaction_dict["nonce"]
-        self.sender = to_checksum_address(transaction_dict["from"])
-        to_addr = transaction_dict["to"]
-        self.receiver = to_checksum_address(to_addr) if to_addr is not None else None
-        self.block_number = transaction_dict["blockNumber"]
-        self.gas = transaction_dict["gas"]
-        self.gas_price = transaction_dict["gasPrice"]
-        self.hash = transaction_dict["hash"].hex()
-        self.index = transaction_dict["transactionIndex"]
-        self.receipt = None
-        self.logs = None
+    receipt = None
+    logs = None
 
+    # def __init__(self, *args, **kwargs):
+    #     """
+    #     :param address: adresse de la transaction
+    #     :type address: str
+    #     """
+    #     super().__init__(self, *args**kwargs)
+    #     self.nonce = transaction_dict["nonce"]
+    #     self.sender = to_checksum_address(transaction_dict["from"])
+    # to_addr = transaction_dict["to"]
+    # self.receiver = to_checksum_address(to_addr) if to_addr is not None else None
+    # self.block_number = transaction_dict["blockNumber"]
+    # self.gas = transaction_dict["gas"]
+    # self.gas_price = transaction_dict["gasPrice"]
+    # self.hash = transaction_dict["hash"].hex()
+    # self.index = transaction_dict["transactionIndex"]
+    # self.receipt = None
+    # self.logs = None
 
-    def get_transaction(self, address):
-        return self.w3.eth.get_transaction(address)
+    @staticmethod
+    def get_by_address(address):
+        try:
+            t = Transaction.get(Transaction.hash == address)
+        except DoesNotExist:
+            infos = Config.get_web3().eth.get_transaction(address)
+            to_addr = infos["to"]
+            kwargs = {
+                "sender": to_checksum_address(infos["from"]),
+                "receiver": to_checksum_address(to_addr) if to_addr is not None else None,
+                "block_number": infos["blockNumber"],
+                "nonce": infos["nonce"],
+                "gas": infos["gas"],
+                "gas_price": infos["gasPrice"],
+                "hash": infos["hash"].hex()
+            }
+            t = Transaction(**kwargs)
+            t.save()
+        return t
 
     def get_receipt(self):
         if self.receipt is not None:
