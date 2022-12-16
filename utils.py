@@ -21,9 +21,6 @@ def get_value_of_token(token: Token, unit='WBNB'):
     if unit != 'WBNB':
         ref_token = BUSD()
     pool = PancakeSwapFactory(psr).get_pool(token, ref_token)
-    print(pool)
-    # print(0xf33f8f76c790e1da5e8acf8b21a2334b4697625b)
-    # pool=Pool("0x0f1f63626b7b59358275d388d721b7db98211eec")
     return exchange_rate(psr, pool)
 
 
