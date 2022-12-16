@@ -7,7 +7,7 @@ class Wallet(W3):
     def __init__(self, address: str):
         super().__init__()
         self.address = self.w3.toChecksumAddress(address)
-        self.current_balance = 0
+        self.current_balance = self.get_balance()
 
         self.transactions = pd.DataFrame([])
         self.money_received = 0
@@ -19,12 +19,9 @@ class Wallet(W3):
         self.transactions['timeStamp'] = pd.to_datetime(self.transactions['timeStamp'], unit='s')
         return self.transactions
 
-    def get_balance(self)->float:
-        self.balance = self.w3.eth.get_balance(self.address)
-        return self.balance
-
-    def get_holders(self):
-        pass
+    def get_balance(self) -> float:
+        self.current_balance = self.w3.eth.get_balance(self.address)
+        return self.current_balance
 
     def __repr__(self):
         return f"""Wallet {self.address}

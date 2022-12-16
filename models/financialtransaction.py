@@ -21,6 +21,12 @@ class FinancialTransaction(Transaction):
     def get_timestamp(self):
         return self.w3.eth.get_block(self.block_number)['timestamp']
 
+    def get_status(self):
+        if self.receipt is None:
+            self.get_receipt()
+        self.status = self.receipt['status']
+        return self.status
+
     def is_internal(self) -> bool:
         return self.w3.eth.get_code(self.receiver).hex() != '0x' if self.receiver is not None else False
 
@@ -32,9 +38,12 @@ class FinancialTransaction(Transaction):
         self.sender = get_type_by_address(self.sender, self.w3)
         return self.sender
 
-    def get_decoded_logs(self):
-        if self.is_internal and self.receipt is None:
-            self.receipt = self.get_receipt()
+    def get_decoded_logs(self) -> list:
+        if len(self.decoded_logs) > 0:
+            return self.decoded_logs
+        if self.is_internal:
+            if self.receipt is None:
+                self.get_receipt()
             log = self.receipt['logs'][0]
             contract = Contract(self.w3.toChecksumAddress(log["address"]), get_abi(log["address"]))
             decoded_logs = list(contract.contract.events.Transfer().processReceipt(self.receipt))

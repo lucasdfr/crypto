@@ -1,6 +1,6 @@
 import json
-
 from models.contract import Contract
+from models.wallet import Wallet
 
 file = open("ressources/tokens.json")
 TOKENS = json.load(file)
@@ -16,6 +16,8 @@ class Token(Contract):
             super().__init__(address_or_name, abi)
         self.name = self.get_name()
         self.symbol = self.get_symbol()
+        self.holders = []
+        self.transactions = []
 
     def __eq__(self, other):
         return self.address == other.address
@@ -27,6 +29,16 @@ class Token(Contract):
     def get_symbol(self) -> str:
         self.symbol = self.contract.functions.symbol().call()
         return self.symbol
+
+    def get_balance_of(self, wallet_address: str) -> float:
+        return self.contract.functions.balanceOf(self.w3.toChecksumAddress(wallet_address)).call()
+
+    def get_holders(self):
+        # todo un fois qu'on aura indexé les transactions
+        for tx in self.transactions:
+            if tx['from'] is not None:
+                self.holders += [Wallet(tx['from'])]
+        return self.holders
 
     def __repr__(self):
         return f"""Token {self.name}

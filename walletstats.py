@@ -11,6 +11,7 @@ from models.contract import Contract
 from models.pool import Pool
 from web3.middleware import geth_poa_middleware
 
+from models.token import Token
 from models.transfer import Transfer
 from utils import is_token, is_pool
 
@@ -101,32 +102,6 @@ def plot_wallet(address, df, df_internal):
     compute_in_out(df_win_lose, df_win_lose_internal, "Argent gagné en tradant")
 
 
-def get_transactions_detail(transaction_hash):
-    receipt = w3.eth.get_transaction_receipt(transaction_hash)
-    for log in receipt['logs']:
-        print(log['address'])
-    for log in receipt['logs']:
-        # log = receipt['logs'][0]
-        smart_contract = log["address"]
-        # print(smart_contract)
-        abi = get_abi(log["address"])
-        if abi is not None:
-            contract = w3.eth.contract(smart_contract, abi=abi)
-            transfers = []
-            decoded_logs = list(contract.events.Transfer().processReceipt(receipt))
-            for decoded_log in decoded_logs:
-                print(Transfer(decoded_log['args']))
-            # print(contract.events.Transfer().processReceipt(receipt))
-            # for decoded_log in decoded_logs:
-            #     if 'from' in decoded_logs[0]['args']:
-            #         transfer = {}
-            #         transfer['from'] = decoded_log['args']['from']
-            #         transfer['to'] = decoded_log['args']['to']
-            #         transfer['value'] = float(decoded_log['args']['value'])
-            #         transfers += [transfer]
-            # return pd.DataFrame(transfers)
-
-
 def get_holders(df, address):
     abi = get_abi(address)
     contract = w3.eth.contract(address=w3.toChecksumAddress(address), abi=abi)
@@ -139,18 +114,11 @@ def get_holders(df, address):
             print(w3.fromWei(token_balance, "ether"))
 
 
-def get_tokens_analytics(df):
-    for index, tx in df.iterrows():
-        print(get_transactions_detail(tx['hash']))
-
-
 df = get_transactions_df(WALLET_ADDRESS)
 df_internal = get_transactions_df(WALLET_ADDRESS, internal=True)
 
-financial=FinancialTransaction('0x4c5727ac8c204fb1fdbc5a19a8f9cc4e9fd5e9f48b852cf5fcb13db4822d9b84')
-print(financial.is_internal)
+financial = FinancialTransaction('0x4c5727ac8c204fb1fdbc5a19a8f9cc4e9fd5e9f48b852cf5fcb13db4822d9b84')
+print(financial.get_status())
 print(financial.get_decoded_logs())
-# print(decoded_logs)
-# financial_transaction.get_receiver()
-# financial_transaction.get_sender()
-# print(financial_transaction)
+# argentina = Token('0x715a26bf4c61304104e29bb50862bcdef24eab36')
+# print(argentina.get_balance_of(WALLET_ADDRESS))
