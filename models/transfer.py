@@ -1,4 +1,3 @@
-from config import Config
 from models.w3 import W3
 
 from utils import get_type_by_address
@@ -33,11 +32,14 @@ class Transfer(W3):
             self.receiver = args['to']
         if 'wad' in args:
             self.value = args['wad']
+            # self.value = self.w3.fromWei(args['wad'], 'ether')
         else:
             self.value = args['value']
+            # self.value = self.w3.fromWei(args['value'], 'ether')
+
 
     def __repr__(self):
-        return f"""Transfer 
+        return f"""Transfer of value {self.value}
         \tFrom : {self.sender}
         \tTo : {self.receiver}
         """

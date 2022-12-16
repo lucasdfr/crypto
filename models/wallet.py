@@ -19,11 +19,9 @@ class Wallet(W3):
         self.transactions['timeStamp'] = pd.to_datetime(self.transactions['timeStamp'], unit='s')
         return self.transactions
 
-    def get_balance(self):
-        return self.w3.eth.get_balance(self.address)
-
-    def get_holders(self):
-        pass
+    def get_balance(self) -> float:
+        self.current_balance = self.w3.eth.get_balance(self.address)
+        return self.current_balance
 
     def __repr__(self):
         return f"""Wallet {self.address}
