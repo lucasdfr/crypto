@@ -24,7 +24,7 @@ class Transaction(W3):
         :param address: adresse de la transaction
         :type address: str
         """
-        super().__init__(self)
+        super().__init__()
         transaction_dict = Config.get_web3().eth.get_transaction(address)
         self.nonce = transaction_dict["nonce"]
         self.sender = to_checksum_address(transaction_dict["from"])
@@ -95,4 +95,4 @@ class Transaction(W3):
         """
 
 
-Config.register_model(Transaction)
+# Config.register_model(Transaction)
