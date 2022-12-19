@@ -103,14 +103,16 @@ def plot_wallet(address, df, df_internal):
     compute_in_out(df_win_lose, df_win_lose_internal, "Argent gagné en tradant")
 
 
-
 # df = get_transactions_df(WALLET_ADDRESS)
 # df_internal = get_transactions_df(WALLET_ADDRESS, internal=True)
 
 
-
 financial = FinancialTransaction('0x4c5727ac8c204fb1fdbc5a19a8f9cc4e9fd5e9f48b852cf5fcb13db4822d9b84')
-print(financial.get_status())
 # print(financial.get_decoded_logs())
+nexus = Token('0x201Ec81532FcA95fbb45204d6764d1a9Eed08856')
 argentina = Token('0x715a26bf4c61304104e29bb50862bcdef24eab36')
-print(get_value_of_token(argentina))
+babydoge = Token('0xc748673057861a797275CD8A068AbB95A902e8de')
+
+print('argentina', get_value_of_token(argentina))
+print('nexus', get_value_of_token(nexus))
+print('babydoge', get_value_of_token(babydoge))
