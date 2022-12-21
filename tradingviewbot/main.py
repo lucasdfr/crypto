@@ -96,7 +96,7 @@ def bet_all(wallet, bnb_price, method='buy'):
         if wallet.balance_dollar > 0:
             status = 1
             status_detail = 'success'
-            wallet.balance_bnb = wallet.balance_dollar / bnb_price
+            wallet.balance_bnb =  wallet.balance_bnb + wallet.balance_dollar / bnb_price
             wallet.balance_dollar = 0
             wallet.potential_win = wallet.balance_bnb * bnb_price - wallet.balance_initial
             wallet.save()
@@ -108,7 +108,7 @@ def bet_all(wallet, bnb_price, method='buy'):
         if wallet.balance_bnb > 0:
             status = 1
             status_detail = 'success'
-            wallet.balance_dollar = wallet.balance_bnb * bnb_price
+            wallet.balance_dollar =  wallet.balance_dollar + wallet.balance_bnb * bnb_price
             wallet.balance_bnb = 0
             wallet.potential_win = wallet.balance_dollar - wallet.balance_initial
             wallet.save()
@@ -134,18 +134,24 @@ def sell_all(wallet, bnb_price, method='buy'):
         else:
             status = 0
             status_detail = 'Not enough reserve on account'
+            wallet.potential_win = wallet.balance_dollar + wallet.balance_bnb * bnb_price - wallet.balance_initial
+            wallet.save()
+        save_history(wallet, wallet.base_trade_amount / bnb_price, method, status, status_detail, bnb_price)
+
     else:
         if wallet.balance_bnb > 0:
             status = 1
             status_detail = 'success'
-            wallet.balance_dollar = wallet.balance_bnb * bnb_price
+            wallet.balance_dollar = wallet.balance_dollar + wallet.balance_bnb * bnb_price
             wallet.balance_bnb = 0
             wallet.potential_win = wallet.balance_dollar - wallet.balance_initial
             wallet.save()
         else:
             status = 0
             status_detail = 'Not enough reserve on account'
-    save_history(wallet, wallet.base_trade_amount / bnb_price, method, status, status_detail, bnb_price)
+            wallet.potential_win = wallet.balance_dollar + wallet.balance_bnb * bnb_price - wallet.balance_initial
+            wallet.save()
+        save_history(wallet, wallet.balance_dollar, method, status, status_detail, bnb_price)
     print(wallet)
 
 
@@ -162,11 +168,11 @@ def strategy(wallet, recommandations, threshold):
         if recommandations['BUY'] > recommandations['SELL']:
             print(f"low percentage {percentage(recommandations['BUY'], recommandations['SELL'])}%")
         else:
-            print(f"low percentage {percentage(recommandations['SELL'], recommandations['BUY'])}%")
+            globals()[f'{wallet.strategy_of_bet}'](wallet, bnb_price, 'sell')
 
 
 wallet = Wallet.create(number=WALLET_NUMBER, balance_initial=BASE_AMOUNT, balance_dollar=BASE_AMOUNT,
-                       base_trade_amount=4).save()
+                       base_trade_amount=20).save()
 
 
 def trade():
