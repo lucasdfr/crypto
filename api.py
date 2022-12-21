@@ -63,3 +63,7 @@ def get_token_balance(address):
     api_arguments = {'module': 'account', 'action': 'balance', "address": address}
     return call_api(api_arguments)
 
+
+def get_bnb_price():
+    url="https://api.binance.com/api/v3/ticker/price?symbol=BNBUSDT"
+    return float(re.get(url).json()['price'])
