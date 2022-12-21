@@ -1,6 +1,5 @@
 import rlp
 from eth_utils import keccak, to_checksum_address, to_bytes, is_checksum_address
-from peewee import IntegerField, TextField, DoesNotExist
 
 from config import Config
 from models.contract import Contract
@@ -93,6 +92,5 @@ class Transaction(W3):
         \tFrom : {self.sender}
         \tTo : {self.receiver}
         """
-
 
 # Config.register_model(Transaction)

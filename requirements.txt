@@ -6,3 +6,5 @@ pandas~=1.5.2
 numpy~=1.23.5
 peewee~=3.15.4
 APScheduler~=3.9.1.post1
+hexbytes~=0.2.3
+blacksheep~=1.2.8
