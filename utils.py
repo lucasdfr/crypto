@@ -57,3 +57,6 @@ def get_type_by_address(address: str, w3):
         return PancakeSwapRouter()
     if is_pool(address):
         return Pool(address)
+
+def percentage(a, b):
+    return (100 * a) / (a + b)
