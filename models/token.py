@@ -3,7 +3,7 @@ import json
 from models.contract import Contract
 from models.wallet import Wallet
 
-file = open("ressources/tokens.json")
+file = open("../ressources/tokens.json")
 TOKENS = json.load(file)
 file.close()
 
