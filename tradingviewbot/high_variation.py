@@ -12,8 +12,7 @@ from trading_utils import sell_all
 
 THRESHOLD = 0.2
 
-
-def high_variation(wallet, token):
+def high_variation(wallet, token, variations):
     amount = compute_amount(wallet.current_balance)
     token_value = get_value_of_token(TokenClass(token.address))[0]
     variations += [token_value]
@@ -26,9 +25,8 @@ def high_variation(wallet, token):
 
 
 def main_high_variation(wallet, token):
-    global variations
     variations = []
     scheduler = BlockingScheduler(timezone='Europe/Paris', executors={'default': ThreadPoolExecutor(1)})
     scheduler.add_job(high_variation, "interval", seconds=4.5, misfire_grace_time=30, max_instances=10000,
-                      kwargs={'wallet': wallet, 'token': token})
+                      kwargs={'wallet': wallet, 'token': token, 'variations': variations})
     scheduler.start()
